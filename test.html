@@ -1,0 +1,52 @@
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<div id="app">
+  <div class="flex flex-col flex-1 flex-grow">
+    <div class="min-h-screen flex flex-col items-center justify-cente">
+      <div class="my-auto">
+        <div class="min-w-sm">
+          <button
+            @click="detectLocation()"
+            class="w-full h-10 bg-blue-500 p-3 rounded-lg flex items-center justify-center text-white font-semibold text-center hover:bg-blue-600 cursor-pointer"
+          >
+            Detect Location Manually
+          </button>
+          <div class="bg-green-100 mt-3 p-3 w-full rounded text-sm">{{message}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createApp, ref, onMounted } = Vue;
+
+  createApp({
+    setup() {
+      const message = ref("Hello vue!");
+      const detectLocation = () => {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const { coords } = position;
+              message.value = `lat:${coords.latitude}, lng:${coords.longitude}`;
+            },
+            () => {
+              message.value =
+                "Please allow location permission to detect location";
+            }
+          );
+        } else {
+          message.value = "geolocation not available";
+        }
+      };
+      onMounted(() => {
+        detectLocation();
+      });
+      return {
+        message,
+        detectLocation,
+      };
+    },
+  }).mount("#app");
+</script>
